@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "br.com.simon.environmentthreats"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "br.com.simon.environmentthreats"
         minSdk = 30
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
