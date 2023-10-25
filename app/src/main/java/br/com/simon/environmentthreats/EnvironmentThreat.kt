@@ -6,7 +6,7 @@ data class EnvironmentThreat (
 
     val id: Long,
     val address: String,
-    val date: LocalDateTime,
+    val date: String,
     val description: String
 
 )

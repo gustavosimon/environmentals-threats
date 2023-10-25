@@ -10,23 +10,15 @@ import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.time.LocalDateTime
-
 
 class MainActivity : AppCompatActivity() {
-
-    /** List with the environment threats */
-    private val environmentThreatsList: MutableList<EnvironmentThreat> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Corte irregular de vegetação nativa"))
-        environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Pesca predatória com rede de arrasto"))
-        environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Descarte irregular de lixo hospitalar"))
-        environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Derrame químico em sistema de esgotamento pluvial com texto a mais do que devia"))
         val listView: ListView = findViewById(R.id.listView)
-        listView.adapter = EnvironmentThreatsAdapter(environmentThreatsList, baseContext)
+        val db: EnvironmentThreatSQLiteDatabase = EnvironmentThreatSQLiteDatabase(baseContext)
+        listView.adapter = EnvironmentThreatsAdapter(db, baseContext)
     }
 
     fun addThreat(v: View) {
@@ -39,34 +31,30 @@ class MainActivity : AppCompatActivity() {
 /**
  * Adapter to show Environment Threats in ListView component.
  */
-class EnvironmentThreatsAdapter(threats: List<EnvironmentThreat>, context: Context) : BaseAdapter() {
+class EnvironmentThreatsAdapter(private val db: EnvironmentThreatSQLiteDatabase,
+                                context: Context) : BaseAdapter() {
 
-    private var threats: List<EnvironmentThreat>
-    private var inflator: LayoutInflater
-
-    init {
-        this.threats = threats
-        this.inflator = LayoutInflater.from(context)
-    }
+    private val inflator: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
-        return threats.size
+        return db.getEnvironmentThreats().size
     }
 
     override fun getItem(i: Int): Any {
-        return threats[i]
+        return db.getEnvironmentThreats()[i]
     }
 
     override fun getItemId(i: Int): Long {
-        return i.toLong()
+        return db.getEnvironmentThreats()[i].id
     }
 
     override fun getView(i: Int, p1: View?, p2: ViewGroup?): View {
         val v: View = inflator.inflate(R.layout.environment_threat, null)
         val txtSaida = v.findViewById<View>(R.id.description) as TextView
         val txtDate = v.findViewById<View>(R.id.date) as TextView
-        txtSaida.text = threats[i].description
-        txtDate.text = "${threats[i].date.dayOfMonth}/${threats[i].date.monthValue}/${threats[i].date.year}"
+        val environmentThreat: EnvironmentThreat = db.getEnvironmentThreats()[i]
+        txtSaida.text = environmentThreat.description
+        txtDate.text = environmentThreat.date
         return v
     }
 

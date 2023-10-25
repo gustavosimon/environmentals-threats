@@ -7,7 +7,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns._ID
-import java.time.LocalDateTime
 import java.util.Optional
 
 const val TABLE_NAME: String = "environment_threats"
@@ -53,7 +52,7 @@ class EnvironmentThreatSQLiteDatabase {
 
         val id = cursor.getLong(cursor.getColumnIndex(_ID))
         val address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS))
-        val date = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(COLUMN_DATE)))
+        val date = cursor.getString(cursor.getColumnIndex(COLUMN_DATE))
         val description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION))
 
         return Optional.of(EnvironmentThreat(id, address, date, description))
@@ -75,7 +74,7 @@ class EnvironmentThreatSQLiteDatabase {
         while (cursor.moveToNext()) {
             val id = cursor.getLong(cursor.getColumnIndex(_ID))
             val address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS))
-            val date = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(COLUMN_DATE)))
+            val date = cursor.getString(cursor.getColumnIndex(COLUMN_DATE))
             val description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION))
             environmentThreats.add(EnvironmentThreat(id, address, date, description))
         }
@@ -111,7 +110,7 @@ class EnvironmentThreatsTable {
 
 }
 
-class EnvironmentThreatSQLiteDatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class EnvironmentThreatSQLiteDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(EnvironmentThreatsTable().getSQL())
