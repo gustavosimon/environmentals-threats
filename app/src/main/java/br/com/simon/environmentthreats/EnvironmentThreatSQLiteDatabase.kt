@@ -59,6 +59,48 @@ class EnvironmentThreatSQLiteDatabase {
         return Optional.of(EnvironmentThreat(id, address, date, description))
     }
 
+    @SuppressLint("Range")
+    fun getEnvironmentThreats(): List<EnvironmentThreat> {
+        val columns = arrayOf<String>(
+            _ID,
+            COLUMN_ADDRESS,
+            COLUMN_DATE,
+            COLUMN_DESCRIPTION
+        )
+
+        val cursor: Cursor = db.query(TABLE_NAME, columns, null, null, null, null, _ID)
+
+        val environmentThreats: MutableList<EnvironmentThreat> = mutableListOf()
+
+        while (cursor.moveToNext()) {
+            val id = cursor.getLong(cursor.getColumnIndex(_ID))
+            val address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS))
+            val date = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(COLUMN_DATE)))
+            val description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION))
+            environmentThreats.add(EnvironmentThreat(id, address, date, description))
+        }
+
+        return environmentThreats
+    }
+
+    fun removeEnvironmentThreat(environmentThreat: EnvironmentThreat): Int {
+        val args = arrayOf<String>(
+            environmentThreat.id.toString()
+        )
+        return db.delete(TABLE_NAME, "$_ID=?", args)
+    }
+
+    fun updateEnvironmentThreat(environmentThreat: EnvironmentThreat): Int {
+        val args = arrayOf<String>(
+            environmentThreat.id.toString()
+        )
+        val contentValues: ContentValues = ContentValues()
+        contentValues.put(COLUMN_ADDRESS, environmentThreat.address)
+        contentValues.put(COLUMN_DATE, environmentThreat.date.toString())
+        contentValues.put(COLUMN_DESCRIPTION, environmentThreat.description)
+        return db.update(TABLE_NAME, contentValues, "$_ID=?", args);
+    }
+
 }
 
 class EnvironmentThreatsTable {
