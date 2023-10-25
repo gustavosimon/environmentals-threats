@@ -82,9 +82,9 @@ class EnvironmentThreatSQLiteDatabase {
         return environmentThreats
     }
 
-    fun removeEnvironmentThreat(environmentThreat: EnvironmentThreat): Int {
+    fun removeEnvironmentThreat(environmentThreatId: Int): Int {
         val args = arrayOf<String>(
-            environmentThreat.id.toString()
+            environmentThreatId.toString()
         )
         return db.delete(TABLE_NAME, "$_ID=?", args)
     }
@@ -102,18 +102,10 @@ class EnvironmentThreatSQLiteDatabase {
 
 }
 
-class EnvironmentThreatsTable {
-
-    fun getSQL(): String {
-        return "CREATE TABLE $TABLE_NAME ($_ID INTEGER PRIMARY KEY, $COLUMN_ADDRESS TEXT, $COLUMN_DATE TEXT, $COLUMN_DESCRIPTION TEXT)"
-    }
-
-}
-
 class EnvironmentThreatSQLiteDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL(EnvironmentThreatsTable().getSQL())
+        db?.execSQL("CREATE TABLE $TABLE_NAME ($_ID INTEGER PRIMARY KEY, $COLUMN_ADDRESS TEXT, $COLUMN_DATE TEXT, $COLUMN_DESCRIPTION TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, p1: Int, p2: Int) {

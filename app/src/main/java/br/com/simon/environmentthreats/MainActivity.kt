@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
@@ -13,16 +14,41 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var adapter: EnvironmentThreatsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val listView: ListView = findViewById(R.id.listView)
-        val db: EnvironmentThreatSQLiteDatabase = EnvironmentThreatSQLiteDatabase(baseContext)
-        listView.adapter = EnvironmentThreatsAdapter(db, baseContext)
+        val db = EnvironmentThreatSQLiteDatabase(baseContext)
+        adapter = EnvironmentThreatsAdapter(db, baseContext)
+        listView.adapter = adapter
+
+        listView.setOnItemClickListener { _, _, _, l ->
+            changeToUpdate(l)
+        }
+
+        listView.setOnItemLongClickListener { _, _, _, l ->
+            db.removeEnvironmentThreat(l.toInt())
+            adapter.notifyDataSetChanged()
+            true
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapter.notifyDataSetChanged()
     }
 
     fun addThreat(v: View) {
         val it = Intent(baseContext, AddEnvironmentThreat::class.java)
+        startActivity(it)
+    }
+
+    private fun changeToUpdate(id: Long) {
+        val it = Intent(baseContext, EditEnvironmentThreat::class.java)
+        it.putExtra("ID", id)
         startActivity(it)
     }
 
