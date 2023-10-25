@@ -1,6 +1,7 @@
 package br.com.simon.environmentthreats
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,13 +20,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_environment_threat)
+        setContentView(R.layout.activity_main)
         environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Corte irregular de vegetação nativa"))
         environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Pesca predatória com rede de arrasto"))
         environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Descarte irregular de lixo hospitalar"))
         environmentThreatsList.add(EnvironmentThreat("Rua", LocalDateTime.now(), "Derrame químico em sistema de esgotamento pluvial com texto a mais do que devia"))
-//        val listView: ListView = findViewById(R.id.listView)
-//        listView.adapter = EnvironmentThreatsAdapter(environmentThreatsList, baseContext)
+        val listView: ListView = findViewById(R.id.listView)
+        listView.adapter = EnvironmentThreatsAdapter(environmentThreatsList, baseContext)
+    }
+
+    fun addThreat(v: View) {
+        val it = Intent(baseContext, AddEnvironmentThreat::class.java)
+        startActivity(it)
     }
 
 }
@@ -60,9 +66,7 @@ class EnvironmentThreatsAdapter(threats: List<EnvironmentThreat>, context: Conte
         val txtSaida = v.findViewById<View>(R.id.description) as TextView
         val txtDate = v.findViewById<View>(R.id.date) as TextView
         txtSaida.text = threats[i].description
-        txtDate.text = threats[i].date.dayOfMonth.toString() + "/" +
-                       threats[i].date.monthValue.toString() + "/" +
-                       threats[i].date.year.toString()
+        txtDate.text = "${threats[i].date.dayOfMonth}/${threats[i].date.monthValue}/${threats[i].date.year}"
         return v
     }
 
