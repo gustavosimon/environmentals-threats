@@ -1,7 +1,5 @@
 package br.com.simon.environmentthreats
 
-import java.time.LocalDateTime
-
 data class EnvironmentThreat (
 
     val id: Long,
