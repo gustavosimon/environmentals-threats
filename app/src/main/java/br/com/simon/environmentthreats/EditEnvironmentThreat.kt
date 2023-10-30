@@ -39,8 +39,8 @@ class EditEnvironmentThreat : AppCompatActivity() {
         db.updateEnvironmentThreat(EnvironmentThreat(currentEnvironmentThreat.id,
                                                      addressText.text.toString(),
                                                      dateText.text.toString(),
-                                                     descriptionText.text.toString()));
-        finish();
+                                                     descriptionText.text.toString()))
+        finish()
     }
 
 
