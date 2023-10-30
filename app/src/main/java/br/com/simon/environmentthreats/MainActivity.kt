@@ -1,5 +1,6 @@
 package br.com.simon.environmentthreats
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -54,13 +55,10 @@ class MainActivity : AppCompatActivity() {
 
 }
 
-/**
- * Adapter to show Environment Threats in ListView component.
- */
 class EnvironmentThreatsAdapter(private val db: EnvironmentThreatSQLiteDatabase,
                                 context: Context) : BaseAdapter() {
 
-    private val inflator: LayoutInflater = LayoutInflater.from(context)
+    private val inflator = LayoutInflater.from(context)
 
     override fun getCount(): Int {
         return db.getEnvironmentThreats().size
@@ -74,6 +72,7 @@ class EnvironmentThreatsAdapter(private val db: EnvironmentThreatSQLiteDatabase,
         return db.getEnvironmentThreats()[i].id
     }
 
+    @SuppressLint("ViewHolder")
     override fun getView(i: Int, p1: View?, p2: ViewGroup?): View {
         val v: View = inflator.inflate(R.layout.environment_threat, null)
         val txtSaida = v.findViewById<View>(R.id.description) as TextView

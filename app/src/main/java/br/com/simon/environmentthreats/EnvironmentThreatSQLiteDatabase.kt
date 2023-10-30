@@ -117,6 +117,7 @@ class EnvironmentThreatSQLiteDatabaseHelper(context: Context) : SQLiteOpenHelper
         private const val DATABASE_NAME = "threats.db"
         private const val DATABASE_VERSION = 1
     }
+
 }
 
 
