@@ -14,31 +14,31 @@ const val COLUMN_ADDRESS: String = "address"
 const val COLUMN_DATE: String = "date"
 const val COLUMN_DESCRIPTION: String = "description"
 
-class EnvironmentThreatSQLiteDatabase {
+class EnvironmentThreatSQLiteDatabase(context: Context) {
 
     private val db: SQLiteDatabase
 
-    constructor(context: Context) {
+    init {
         db = EnvironmentThreatSQLiteDatabaseHelper(context).writableDatabase
     }
 
     fun addEnvironmentThreat(environmentThreat: EnvironmentThreat): Long {
-        val contentValues: ContentValues = ContentValues()
+        val contentValues = ContentValues()
         contentValues.put(COLUMN_ADDRESS, environmentThreat.address)
-        contentValues.put(COLUMN_DATE, environmentThreat.date.toString())
+        contentValues.put(COLUMN_DATE, environmentThreat.date)
         contentValues.put(COLUMN_DESCRIPTION, environmentThreat.description)
         return db.insert(TABLE_NAME, null, contentValues)
     }
 
     @SuppressLint("Range")
     fun getEnvironmentThreat(id: Long): Optional<EnvironmentThreat> {
-        val columns = arrayOf<String>(
+        val columns = arrayOf(
             _ID,
             COLUMN_ADDRESS,
             COLUMN_DATE,
             COLUMN_DESCRIPTION
         )
-        val args = arrayOf<String>(
+        val args = arrayOf(
             id.toString()
         )
 
@@ -50,17 +50,19 @@ class EnvironmentThreatSQLiteDatabase {
 
         cursor.moveToNext()
 
-        val id = cursor.getLong(cursor.getColumnIndex(_ID))
+        val threatId = cursor.getLong(cursor.getColumnIndex(_ID))
         val address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS))
         val date = cursor.getString(cursor.getColumnIndex(COLUMN_DATE))
         val description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION))
 
-        return Optional.of(EnvironmentThreat(id, address, date, description))
+        cursor.close()
+
+        return Optional.of(EnvironmentThreat(threatId, address, date, description))
     }
 
     @SuppressLint("Range")
     fun getEnvironmentThreats(): List<EnvironmentThreat> {
-        val columns = arrayOf<String>(
+        val columns = arrayOf(
             _ID,
             COLUMN_ADDRESS,
             COLUMN_DATE,
@@ -69,7 +71,7 @@ class EnvironmentThreatSQLiteDatabase {
 
         val cursor: Cursor = db.query(TABLE_NAME, columns, null, null, null, null, _ID)
 
-        val environmentThreats: MutableList<EnvironmentThreat> = mutableListOf()
+        val environmentThreats: MutableList<EnvironmentThreat> = ArrayList()
 
         while (cursor.moveToNext()) {
             val id = cursor.getLong(cursor.getColumnIndex(_ID))
@@ -79,25 +81,27 @@ class EnvironmentThreatSQLiteDatabase {
             environmentThreats.add(EnvironmentThreat(id, address, date, description))
         }
 
+        cursor.close()
+
         return environmentThreats
     }
 
     fun removeEnvironmentThreat(environmentThreatId: Int): Int {
-        val args = arrayOf<String>(
+        val args = arrayOf(
             environmentThreatId.toString()
         )
         return db.delete(TABLE_NAME, "$_ID=?", args)
     }
 
     fun updateEnvironmentThreat(environmentThreat: EnvironmentThreat): Int {
-        val args = arrayOf<String>(
+        val args = arrayOf(
             environmentThreat.id.toString()
         )
-        val contentValues: ContentValues = ContentValues()
+        val contentValues = ContentValues()
         contentValues.put(COLUMN_ADDRESS, environmentThreat.address)
-        contentValues.put(COLUMN_DATE, environmentThreat.date.toString())
+        contentValues.put(COLUMN_DATE, environmentThreat.date)
         contentValues.put(COLUMN_DESCRIPTION, environmentThreat.description)
-        return db.update(TABLE_NAME, contentValues, "$_ID=?", args);
+        return db.update(TABLE_NAME, contentValues, "$_ID=?", args)
     }
 
 }
@@ -109,8 +113,8 @@ class EnvironmentThreatSQLiteDatabaseHelper(context: Context) : SQLiteOpenHelper
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, p1: Int, p2: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME");
-        onCreate(db);
+        db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+        onCreate(db)
     }
 
     companion object {
